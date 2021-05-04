@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon May 03 18:38:34 KST 2021
+application-8.6.1.pom>=
+application-8.6.1.jar>=

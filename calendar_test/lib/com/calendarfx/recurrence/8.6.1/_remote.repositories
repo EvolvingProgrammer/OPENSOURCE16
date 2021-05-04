@@ -1,0 +1,9 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon May 03 18:33:59 KST 2021
+recurrence-8.6.1.jar>central=
+recurrence-8.6.1-javadoc.jar>=
+recurrence-8.6.1.pom>central=
+recurrence-8.6.1.jar>=
+recurrence-8.6.1.pom>=
+recurrence-8.6.1-sources.jar>=
+recurrence-8.6.1-sources.jar>central=
