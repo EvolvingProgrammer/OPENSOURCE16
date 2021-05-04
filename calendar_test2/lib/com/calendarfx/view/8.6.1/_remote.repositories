@@ -1,0 +1,9 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon May 03 18:34:32 KST 2021
+view-8.6.1-javadoc.jar>=
+view-8.6.1.pom>=
+view-8.6.1.jar>central=
+view-8.6.1.pom>central=
+view-8.6.1-sources.jar>=
+view-8.6.1.jar>=
+view-8.6.1-sources.jar>central=
