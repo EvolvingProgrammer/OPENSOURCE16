@@ -40,54 +40,115 @@ import java.awt.Button;
 import java.awt.Insets;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.LinkedList;
+
+import org.omg.CORBA.PUBLIC_MEMBER;
+import org.sqlite.core.DB;
 
 public class Main extends Application {
+	
+	Calendar Private_Schedule;
+    Calendar University_Schedule;
+    Calendar BlackBord_Schedule ;
+    Calendar BlackBord_Movie_Schedule;
+    Data_base db;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         CalendarView calendarView = new CalendarView();
 
-        //Ä¶¸°´õ ¸ñ·Ï ¸¸µé±â 
-        //ex ÇĞ±³, Ãë¹Ì, °øºÎ
-        Calendar katja = new Calendar("Katja");
-        Calendar dirk = new Calendar("Dirk");
-        Calendar philip = new Calendar("Philip");
-        Calendar jule = new Calendar("Jule");
-        Calendar armin = new Calendar("Armin");
-        Calendar birthdays = new Calendar("Birthdays");
-        Calendar holidays = new Calendar("Holidays");
+     
+       
+      
+        
+       
+        Private_Schedule = new Calendar("ê°œì¸ì¼ì •");
+        University_Schedule = new Calendar("í•™ì‚¬ì¼ì •");
+        BlackBord_Schedule = new Calendar("ë¸”ë™ë³´ë“œ ê³¼ì œ");
+        BlackBord_Movie_Schedule = new Calendar("ì´ëŸ¬ë‹ ì¼ì •");
+       // Calendar armin = new Calendar("Armin");
+       // Calendar birthdays = new Calendar("Birthdays");
+      //  Calendar holidays = new Calendar("Holidays");
+        
+        Event_handle handle = new Event_handle();
+        
+    
+        
+        EventHandler<CalendarEvent> l = e -> handle.handleEvent(e);
+   
+        Private_Schedule.addEventHandler(l);
+        University_Schedule.addEventHandler(l);
+        BlackBord_Schedule.addEventHandler(l);
+        BlackBord_Movie_Schedule.addEventHandler(l);
+        
+        
+        // dbì™€ í•¸ë“¤ëŸ¬ ì—°ê²° ë©”ì¸ ì„œë¡œ ì—°ê²°
+        db = new Data_base();
+        db.M = this;
+    
+        handle.Private_Schedule_list = db.Private_Schedule_list;
+        handle.University_Schedule_list = db.University_Schedule_list;
+        handle.BlackBord_Schedule_list = db.BlackBord_Schedule_list ;
+        handle.BlackBord_Movie_Schedule_list = db.BlackBord_Movie_Schedule_list;
+        handle.db = db;
+        handle.M = this;
+        
+        
+      
+        
+        // ë©”ì¸ ì—°ê²°í›„ ë°ì´í„°ë² ì´ìŠ¤ ë¦¬ë¡œë“œ ì‹œì‘
+        db.reload_schedule(Private_Schedule,"Private_Schedule");
+        db.reload_schedule(University_Schedule,"University_Schedule");
+        db.reload_schedule(BlackBord_Schedule,"BlackBord_Schedule");
+        db.reload_schedule(BlackBord_Movie_Schedule,"BlackBord_Movie_Schedule");
+        
+        
+        ///
+        
+       
+        
+     //   philip.addEventHandler(l);
+     //   jule.addEventHandler(l);
+      //  armin.addEventHandler(l);
+        
+        ////
 
         
-        //½ºÄÉÁÙ µî·Ï ¹æ¹ı, µ¥ÀÌÅÍº£ÀÌ½º¿¡¼­ °¡Á®¿Â ½ºÄÉÁÙÀ» µî·Ï ÇÒ ¶§(ÇÁ·Î±×·¥ ½ÇÇà ½Ã)
+      /*
         Entry<String> entry = new Entry<>("Hello");
-        entry.setInterval(LocalDate.now());
+        //entry.setInterval(LocalDate.now());
         entry.changeStartDate(LocalDate.now());
         entry.changeEndDate(LocalDate.now());
         entry.changeStartTime(LocalTime.of(12,30));
         entry.changeEndTime(LocalTime.of(13,30));
-        holidays.addEntry(entry);
-        //
+       
+        University_Schedule.addEntry(entry);
         
-        //ÇÃ·¡³Ê¿¡¼­ º¸ÀÌ´Â ÀÛÀº ´ÜÃà ÀÌ¸§ ÁöÁ¤ ¹æ¹ı
-        katja.setShortName("K");
-        dirk.setShortName("D");
-        philip.setShortName("P");
-        jule.setShortName("J");
-        armin.setShortName("A");
-        birthdays.setShortName("B");
-        holidays.setShortName("H");
-        // Ä¶¸°´õ¿¡ º¸ÀÌ´Â »ö ÁöÁ¤ ¹æ¹ı
-        katja.setStyle(Style.STYLE1);
-        dirk.setStyle(Style.STYLE2);
-        philip.setStyle(Style.STYLE3);
-        jule.setStyle(Style.STYLE4);
-        armin.setStyle(Style.STYLE5);
-        birthdays.setStyle(Style.STYLE6);
-        holidays.setStyle(Style.STYLE7);
+        */
+    
+       
+     
+        
+       
+        Private_Schedule.setShortName("ê°œ");
+        University_Schedule.setShortName("í•™");
+        BlackBord_Schedule.setShortName("ë¸”");
+        BlackBord_Movie_Schedule.setShortName("ì´");
+      //  armin.setShortName("A");
+     //   birthdays.setShortName("B");
+      //  holidays.setShortName("H");
+       
+        Private_Schedule.setStyle(Style.STYLE1);
+        University_Schedule.setStyle(Style.STYLE2);
+        BlackBord_Schedule.setStyle(Style.STYLE3);
+        BlackBord_Movie_Schedule.setStyle(Style.STYLE4);
+     //   armin.setStyle(Style.STYLE5);
+    //    birthdays.setStyle(Style.STYLE6);
+    //    holidays.setStyle(Style.STYLE7);
 
-        // borderpane¿¡ Ãß°¡ÇÏ´Â ¹æ¹ı
-        CalendarSource familyCalendarSource = new CalendarSource("Family");
-        familyCalendarSource.getCalendars().addAll(birthdays, holidays, katja, dirk, philip, jule, armin);
+        
+        CalendarSource familyCalendarSource = new CalendarSource("Dynamic Scheduler");
+        familyCalendarSource.getCalendars().addAll(Private_Schedule, University_Schedule, BlackBord_Schedule, BlackBord_Movie_Schedule);
 
         calendarView.getCalendarSources().setAll(familyCalendarSource);
         calendarView.setRequestedTime(LocalTime.now());
@@ -97,17 +158,25 @@ public class Main extends Application {
         
         HBox hbox = new HBox();
         
-        // fxml·Î´õ¸¦ ÀÌ¿ëÇØ Ä¶¸°´õ ¿Ü ´Ù¸¥ ¹öÆ°ÀÌ³ª ±âÅ¸ Àâ°Íµé Ãß°¡ÇÒ ¶§ »ç¿ë
-      /*  try {
-    		Parent root2 = (Parent)FXMLLoader.load(getClass().getResource("Main_ui.fxml"));
+       
+       try {
+    	
+    				
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("Selenium_Ui.fxml"));
+    		Parent root2 = loader.load();
+    		App_Controller dac = (App_Controller) loader.getController();
+    		dac.test();
+    		dac.db = this.db;
+    		dac.M = this;
+    	
     		bp.setLeft(root2);
     	} catch(Exception e) {
     		e.printStackTrace();
     	}
     	
-        */
+       
       
-        // ´Ş·Â ½Ã°£ ¾÷µ¥ÀÌÆ® ÇÏ´Â ½º·¹µå
+       
         Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
             @Override
             public void run() {
@@ -133,11 +202,15 @@ public class Main extends Application {
         updateTimeThread.start();
         
         
-        
+        primaryStage.setOnCloseRequest(e -> {
+        	
+        	db.save_calendar();
+        	Platform.exit();
+        });
         
    
         
-      // È­¸é »ı¼º
+      
         Scene scene = new Scene(bp);
         primaryStage.setTitle("Calendar");
         primaryStage.setScene(scene);
@@ -146,31 +219,23 @@ public class Main extends Application {
         primaryStage.centerOnScreen();
         primaryStage.show();
         
-        // ÀÌº¥Æ® ÇÚµé·¯¸¦ µî·ÏÇØ¾ß Ä¶¸°´õ¿¡¼­ ÀÌº¥Æ® Ã³¸®°¡ °¡´ÉÇÔ
-        EventHandler<CalendarEvent> l = e -> handleEvent1(e);
-        birthdays.addEventHandler(l);
-        holidays.addEventHandler(l);
+        
+        
+        
         
    
     }
     
-    // ÀÌº¥Æ® ÇÚµé·¯, ¿©±â¼­ ÇØ´ç Á¶°ÇÀÌ ¸ÂÀ¸¸é ¿£Æ®¸®(½ºÄÉÁÙ)À» °¡Á®¿Ã ¼ö ÀÖÀ½
-    private EventHandler<CalendarEvent> handleEvent1(CalendarEvent e) {
-    
   
-    	// ¿¹½Ã´Â ¿£Æ®¸®°¡ ´õÇØÁö°Å³ª, ¿£Æ®¸®°¡ »èÁ¦µÈ °æ¿ì, ÀÌ °æ¿ì ¸»°íµµ
-    	// ½ºÄÉÁÙÀÌ ´Ù¸¥ Ä«Å×°í¸®·Î ³Ñ¾î°£°æ¿ì(ÇĞ±³ -> Ãë¹Ì), ½ºÄÉÁÙ³»¿ëÀÌ º¯°æµÈ °æ¿ì 
-    	// ÀÛ¾÷ ÇÊ¿ä
-    	if(e.isEntryAdded()== true || e.isEntryRemoved())
-    	System.out.println(e.getEntry());
-		return null;
-    	
-    	}
 
     public static void main(String[] args) {
         launch(args);
         
        
+     
+        
+       
         
     }
+  
 }
