@@ -16,13 +16,17 @@
 
 package application;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
 import com.calendarfx.model.CalendarEvent;
 import com.calendarfx.model.CalendarSource;
-import com.calendarfx.model.Entry;
 import com.calendarfx.view.CalendarView;
-
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -30,23 +34,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.awt.Button;
-import java.awt.Insets;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.LinkedList;
-
-import org.omg.CORBA.PUBLIC_MEMBER;
-import org.sqlite.core.DB;
-
 public class Main extends Application {
-	
+	static MemoPaneController MemoPaneControllerHandle;
 	Calendar Private_Schedule;
     Calendar University_Schedule;
     Calendar BlackBord_Schedule ;
@@ -156,8 +149,7 @@ public class Main extends Application {
         BorderPane bp = new BorderPane();
         bp.setCenter(calendarView);
         
-        HBox hbox = new HBox();
-        
+
        
        try {
     	
@@ -174,7 +166,18 @@ public class Main extends Application {
     		e.printStackTrace();
     	}
     	
-       
+    // 메모기능 추가 
+       HBox hbox = new HBox();
+       try {
+   		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MemoPane.fxml"));
+   		Parent root3 = fxmlLoader.load();
+   		bp.setRight(root3);
+   		
+   		MemoPaneControllerHandle = (MemoPaneController)fxmlLoader.getController();
+   		
+   	} catch(Exception e) {
+   		e.printStackTrace();
+   	}
       
        
         Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
@@ -203,7 +206,22 @@ public class Main extends Application {
         
         
         primaryStage.setOnCloseRequest(e -> {
-        	
+        	try{
+        		String save_daily = MemoPaneControllerHandle.getDailyTextArea();
+            	String save_monthly = MemoPaneControllerHandle.getMonthlyTextArea();
+            	FileOutputStream output=new FileOutputStream(".\\src\\application\\DailyMemo.txt",false);
+				OutputStreamWriter writer=new OutputStreamWriter(output,"UTF-8");
+				FileOutputStream output2=new FileOutputStream(".\\src\\application\\MonthlyMemo.txt",false);
+				OutputStreamWriter writer2=new OutputStreamWriter(output2,"UTF-8");
+				BufferedWriter out=new BufferedWriter(writer);
+				BufferedWriter out2=new BufferedWriter(writer2);
+				out.write(save_daily);
+				out.close();
+				out2.write(save_monthly);
+				out2.close();
+        	}catch(Exception e1) {
+        		e1.getStackTrace();
+        	}
         	db.save_calendar();
         	Platform.exit();
         });
@@ -214,7 +232,7 @@ public class Main extends Application {
         Scene scene = new Scene(bp);
         primaryStage.setTitle("Calendar");
         primaryStage.setScene(scene);
-        primaryStage.setWidth(1300);
+        primaryStage.setWidth(1800);
         primaryStage.setHeight(1000);
         primaryStage.centerOnScreen();
         primaryStage.show();
