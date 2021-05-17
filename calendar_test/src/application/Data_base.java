@@ -158,7 +158,6 @@ public class Data_base {
 	
 	public void save_calendar()
 	{
-		
 		try {
 			stat.executeUpdate("DELETE FROM Private_Schedule;");
 			stat.executeUpdate("DELETE FROM University_Schedule;");
@@ -326,8 +325,7 @@ public class Data_base {
 			
 			 
 	        Entry<String> entry = new Entry<>(
-	        		seltest.academicList.get(i).getEvent()
-	    	        
+	        		seltest.academicList.get(i).getEvent()  
 			);
 	        
 	        String start_date = seltest.academicList.get(i).getStartYear() +"-" + 
@@ -358,8 +356,24 @@ public class Data_base {
 	
 		
 	}
-	
-	
-	
+	public void reset_selenium() {
+		try {
+			stat.executeUpdate("DELETE FROM University_Schedule;");
+			stat.executeUpdate("DELETE FROM BlackBord_Schedule;");
+			stat.executeUpdate("DELETE FROM BlackBord_Movie_Schedule;");
+			stat.executeUpdate("DELETE FROM Private_Schedule;");
+			
+			M.BlackBord_Movie_Schedule.clear();
+			M.BlackBord_Schedule.clear();
+			M.University_Schedule.clear();
+			
+			Private_Schedule_list.clear();
+			University_Schedule_list.clear();
+			BlackBord_Schedule_list.clear();
+			BlackBord_Movie_Schedule_list.clear();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}		
 }
 

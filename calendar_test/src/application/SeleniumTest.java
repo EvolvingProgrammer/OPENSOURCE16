@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
@@ -94,10 +95,10 @@ public class SeleniumTest {
 			
 			//get page
 			driver.get(blackboard_url);
-
 			//로그인 대기 및 캘린더 항목으로 이동
 			while(true) {
 				try {
+					driver.manage().timeouts().pageLoadTimeout(5, TimeUnit.SECONDS);
     				while(true) {
         				if(driver.getCurrentUrl().equals("https://blackboard.sejong.ac.kr/ultra/course")) {
         					cookieL = driver.manage().getCookies();        					
@@ -128,7 +129,7 @@ public class SeleniumTest {
     		}
     		
     		//이전 드라이버에서 로그인 후, 새로운 드라이버에 쿠키 추가
-    		driver.close();
+    		driver.quit();
     		chromeOptions.addArguments("--headless");
     		driver = new ChromeDriver(chromeOptions);
 			driver.get("https://blackboard.sejong.ac.kr/ultra/course");
@@ -198,9 +199,8 @@ public class SeleniumTest {
 			
 		} catch (Exception e) {
 			System.out.println("Blackboard_data loading failed");
-			e.printStackTrace();
 		} finally {
-				driver.close();
+				driver.quit();
 		}
 	}
 //학사일정 데이터 파싱
@@ -231,7 +231,7 @@ public class SeleniumTest {
 			System.out.println("Academic_data loading failed");
 			e.printStackTrace();
 		} finally {
-			driver.close();
+			driver.quit();
 		}
 	}
 //전체 데이터 파싱
