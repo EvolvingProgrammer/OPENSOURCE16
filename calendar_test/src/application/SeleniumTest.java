@@ -7,38 +7,41 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 /*
-2021-05-13 수정본
-
-데이터 테이블 결정 후, 저장 방식 수정 가능
+2021-05-16 수정본
 
 각 리스트에 저장되는 데이터들은 각각 아래와 같은 변수로 읽어올 수 있음.
 
-
 강의 데이터 (별도의 수강일이 강의 이름에 명시되어 있지 않은경우 주차별로만 분류하도록 함. 이러한 경우에 시작일, 시작시간, 마감일, 마감시간은 각각 해당 주차의 월요일, 0:00, 일요일, 0:00으로 셋팅되어짐.)
+
 Week  |  title  |  start_date  |  start_time  |  deadline_date  |  deadline_time  |  subject
 ---------------------------------------------------------------------------------------------
 주차	  | 강의 주제   |  수강 시작일	   |  수강 시작 시간    |  강의 출석 마감일       |  강의 출석 마감 시간   |  과목명
 
+
 과제 데이터
+
 assignment_name  |  deadline_date  |  deadline_time  |  subject
 ------------------------------------------------------------------
 과제명			 |  마감일		   |  마감 시간		 |  과목명
 
+
 학사 일정 데이터
+
 event | start_year | start_month | start_day | end_year | end_month | end_day
 ------------------------------------------------------------------------------
 행사명   | 시작년도	   | 시작월	 	 | 시작일		 | 마감년도	| 마감월		| 마감일
-
-
 */
+
 
 interface DataSet {
 	void saveData(String s);
@@ -55,8 +58,11 @@ public class SeleniumTest {
 	public static LinkedList<AssignmentDataSet> assignmentList = new LinkedList<>();
 	public static LinkedList<AcademicDataSet> academicList = new LinkedList<>();
 	
+	//블랙보드 로그인 쿠키
+	Set<Cookie> cookieL;
+	
 	//개강일 정보
-	public static final String semesterStartDate = "2021-03-02";
+	public String semesterStartDate = null;
 	
 	//WebDriver
 	private WebDriver driver;
@@ -67,51 +73,48 @@ public class SeleniumTest {
 	public static final String WEB_DRIVER_PATH = "./chromedriver.exe";
     
 	//Start URL
-	private String base_url;
+	private String blackboard_url;
+	private String academic_url;
 
 	public SeleniumTest() {
 		super();
 		//System Property SetUp
 		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
-        
-        //Driver SetUp
-	//	ChromeOptions chromeOptions = new ChromeOptions();
-		
-		////////////////////////////////////////////////
-		//                                           \\
-		//   crawl메소드 실행시 드라이버 생성되게 변경         \\
-		// 그냥 생성시, 프로그램 시작과 동시에 크롬창이 생성됨     \\
-		/////////////////////////////////////////////////
-//		chromeOptions.addArguments("--headless");
-// 		driver = new ChromeDriver(chromeOptions);
-     	base_url = "https://portal.sejong.ac.kr/jsp/login/loginSSL.jsp?rtUrl=blackboard.sejong.ac.kr";      
-    }    
-    public void crawl() { 
-    	try {
-    		ChromeOptions chromeOptions = new ChromeOptions();
-    		driver = new ChromeDriver(chromeOptions);
-    		//get page
-    		driver.get(base_url);
 
-    		//로그인 대기 및 캘린더 항목으로 이동
-    		while(true) {
-    			try {
-        			while(true) {
-            			if(driver.getCurrentUrl().equals("https://blackboard.sejong.ac.kr/ultra/course")) {
-            				Thread.sleep(2000);
-            				break;
-            			}
-            			else {
-            				Thread.sleep(8000);
-            			}
-        			}
-        			break;
-        		} catch(Exception e) {
-        			//driver.switchTo().alert().accept();
-        		}
-    		}
-    		
-    		//코스 정보 저장
+		blackboard_url = "https://portal.sejong.ac.kr/jsp/login/loginSSL.jsp?rtUrl=blackboard.sejong.ac.kr";
+		academic_url = "http://www.sejong.ac.kr/unilife/program_01.html";     
+    }    
+	
+//BlackBoard 데이터 파싱
+	public void blackBoardCrawl() {
+		try {
+			//Driver SetUp
+			ChromeOptions chromeOptions = new ChromeOptions();
+			driver = new ChromeDriver(chromeOptions);
+			
+			//get page
+			driver.get(blackboard_url);
+
+			//로그인 대기 및 캘린더 항목으로 이동
+			while(true) {
+				try {
+    				while(true) {
+        				if(driver.getCurrentUrl().equals("https://blackboard.sejong.ac.kr/ultra/course")) {
+        					cookieL = driver.manage().getCookies();        					
+        					Thread.sleep(2000);
+        					break;
+        				}
+        				else {
+        					Thread.sleep(6000);
+        				}
+    				}
+    				break;
+    			} catch(Exception e) {
+    				//driver.switchTo().alert().accept();
+    			}
+			}
+			
+			//코스 정보 저장
     		Integer courseNum = new Integer(2);
     		while(true) {
     			try {
@@ -124,12 +127,21 @@ public class SeleniumTest {
     			}
     		}
     		
+    		//이전 드라이버에서 로그인 후, 새로운 드라이버에 쿠키 추가
+    		driver.close();
+    		chromeOptions.addArguments("--headless");
+    		driver = new ChromeDriver(chromeOptions);
+			driver.get("https://blackboard.sejong.ac.kr/ultra/course");
+			for(Cookie temp_cookie : cookieL ){
+				driver.manage().addCookie(temp_cookie);
+			}
+			
     		//강의 일정 데이터 파싱
     		for(int i = 0 ; i < courseList.size() ; i++) {
     			Integer num = new Integer(0);
     			String courseLink = "https://blackboard.sejong.ac.kr/webapps/blackboard/content/launchLink.jsp?course_id=" + courseList.get(i).course_code + "&tool_id=_2565_1&tool_type=TOOL&mode=view&mode=reset";
     			driver.get(courseLink);
-    			Thread.sleep(1500);
+    			Thread.sleep(1000);
     			
     			driver.switchTo().frame("contentFrame");
     			try {
@@ -158,17 +170,11 @@ public class SeleniumTest {
     		
     		//캘린더 항목으로 이동
     		driver.get("https://blackboard.sejong.ac.kr/ultra/calendar");
-    		Thread.sleep(1000);
+    		Thread.sleep(1500);
     		
     		//마감일 버튼 클릭
     		webElement = driver.findElement(By.id("bb-calendar1-deadline"));
     		webElement.click();
-    		Thread.sleep(1000);
-    		
-    		//과제 항목 끝까지 업스크롤
-    		JavascriptExecutor jse = (JavascriptExecutor) driver;
-    		driver.manage().window().maximize();
-    		jse.executeScript("window.scrollBy(0,-2000)");	
     		Thread.sleep(1000);
     		
     		//과제 마감일 데이터 파싱
@@ -189,29 +195,51 @@ public class SeleniumTest {
     				break;
     			}
     		}		
-    		
-    		//학사일정 사이트로 이동
-    		driver.get("http://www.sejong.ac.kr/unilife/program_01.html");
-    		
-    		//학사 일정 데이터 파싱
-    		for(Integer i = new Integer(3);i<17;i++) {
-    	    	String data_xpath = "//*[@id='content']/div[" + i.toString() + "]/div[2]";
-    	    	webElement = driver.findElement(By.xpath("//*[@id='content']/div[" + i.toString() + "]/h4"));
-    	    	String month = webElement.getText();
-    	    	webElement = driver.findElement(By.xpath(data_xpath));
-    	    	AcademicDataSet ds = new AcademicDataSet(month, webElement.getText());
-    		}
-    		
-    		for(AcademicDataSet ds : academicList) {
-    			ds.printData();
-    		}
-    		System.out.println("Academic_data loading complete.\n");  		
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	} finally {
-    		driver.close();
-    	}
-    }
+			
+		} catch (Exception e) {
+			System.out.println("Blackboard_data loading failed");
+			e.printStackTrace();
+		} finally {
+				driver.close();
+		}
+	}
+//학사일정 데이터 파싱
+	public void academicDateCrawl() {
+		try {
+			//Driver SetUp
+			ChromeOptions chromeOptions = new ChromeOptions();
+			chromeOptions.addArguments("--headless");
+			driver = new ChromeDriver(chromeOptions);
+			
+			//학사일정 사이트로 이동
+	   		driver.get("http://www.sejong.ac.kr/unilife/program_01.html");
+	   		
+	   		//학사 일정 데이터 파싱
+	   		for(Integer i = new Integer(3);i<17;i++) {
+	   	    	String data_xpath = "//*[@id='content']/div[" + i.toString() + "]/div[2]";
+	   	    	webElement = driver.findElement(By.xpath("//*[@id='content']/div[" + i.toString() + "]/h4"));
+	   	    	String month = webElement.getText();
+	   	    	webElement = driver.findElement(By.xpath(data_xpath));
+	   	    	AcademicDataSet ds = new AcademicDataSet(month, webElement.getText());
+	   		}
+	   		
+	   		for(AcademicDataSet ds : academicList) {
+	   			ds.printData();
+	   		}
+	    	System.out.println("Academic_data loading complete.\n");  	
+		} catch(Exception e) {
+			System.out.println("Academic_data loading failed");
+			e.printStackTrace();
+		} finally {
+			driver.close();
+		}
+	}
+//전체 데이터 파싱
+	public void crawl() {
+		academicDateCrawl();
+		blackBoardCrawl();
+	}
+
 //코스 데이터
     public class CourseDataSet implements DataSet {
     	private String course_name;
@@ -406,6 +434,19 @@ public class SeleniumTest {
     		this.end_month = e_m;
     		this.start_day = s_d;
     		this.end_day = e_d;
+    		
+    		Calendar today = Calendar.getInstance();
+
+    		if(today.get(Calendar.MONTH) < 6) {
+    			if(this.event.contains("1학기") && this.event.contains("개강")) {    				
+    				semesterStartDate = this.start_year + "-" + this.start_month + "-" + this.start_day;
+    			}
+    		}
+    		else {
+    			if(this.event.contains("2학기") && this.event.contains("개강")) {
+    				semesterStartDate = this.start_year + "-" + this.start_month + "-" + this.start_day;
+    			}
+    		}
     	}
     	AcademicDataSet(String m, String e) {
     		String[] strArr = (m.split("\\."))[0].split(" ");
