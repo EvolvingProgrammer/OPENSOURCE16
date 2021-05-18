@@ -88,12 +88,19 @@ public class App_Controller {
     
     //시스템 연동 스레드
     public class crawlThread extends Thread {
+    	
+    	@Override
     	public void run() {
     		try {
     			is_run = true;
     			db.sync_selenium();
     		} catch(Exception e) {
-    			
+    			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    			alert.getButtonTypes().clear();
+    	    	alert.getButtonTypes().addAll(ButtonType.OK);
+    	    	alert.setHeaderText("오류가 발생했습니다");
+    	    	alert.setContentText("다시 시도해 주세요");
+    			return;
     		} finally {
     			is_run = false;
     		}
