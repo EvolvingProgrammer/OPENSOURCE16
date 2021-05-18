@@ -28,34 +28,35 @@ public class App_Controller {
 
     @FXML
     void Start_Crawl(MouseEvent event) {   
-    	
     	Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    	alert.setHeaderText("학사정보 시스템 연동을 시작합니다.");
+    	alert.getButtonTypes().clear();
+    	
+    	if( is_run == true ) {
+        	alert.setTitle("Already running..");
+        	alert.setHeaderText("학사정보 시스템 연동 중...");
+        	alert.getButtonTypes().addAll(ButtonType.YES);
+    	}
+    	else {
+        	alert.setHeaderText("학사정보 시스템 연동을 시작합니다.");
+        	alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
+    	}
+
     	//alert.getDialogPane().setExpandableContent(new ScrollPane(new TextArea(sw.toString())));
-   
     	
     	Optional<ButtonType> result = alert.showAndWait();
-    	if (result.get() == ButtonType.OK){
+    	if (result.isPresent() && result.get() == ButtonType.YES) {
     	    // ... user chose OK
-    		
-    		if( is_run == false)
-        	{
-        		is_run = true;
-        		
-        		is_run = false;		
-        		db.sync_selenium();
-        		
-        		return;
-        		
+
+    		if( is_run == false) {
+    			crawlThread t = new crawlThread();
+        		t.start();	
+        		return;        		
         	}
-        	else
-        	{
+        	else {
         		return;
-        	}
-    		
-    		
-    		
-    	} else {
+        	}	
+    	} 
+    	else {
     	    // ... user chose CANCEL or closed the dialog
     	}
     }
@@ -81,12 +82,12 @@ public class App_Controller {
     	}
     }
     
-    public void test()
-    {
+    public void test() {
     	System.out.println("테스트입니다 컨트롤러 접근 성공");
     }
     
-    public class AlertThread extends Thread {
+    //시스템 연동 스레드
+    public class crawlThread extends Thread {
     	public void run() {
     		try {
     			is_run = true;
