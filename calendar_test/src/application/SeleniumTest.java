@@ -25,9 +25,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 강의 데이터 (별도의 수강일이 강의 이름에 명시되어 있지 않은경우 주차별로만 분류하도록 함. 이러한 경우에 시작일, 시작시간, 마감일, 마감시간은 각각 해당 주차의 월요일, 0:00, 일요일, 0:00으로 셋팅되어짐.)
 
-Week  |  title  |  start_date  |  start_time  |  deadline_date  |  deadline_time  |  subject
----------------------------------------------------------------------------------------------
-주차	  | 강의 주제   |  수강 시작일	   |  수강 시작 시간    |  강의 출석 마감일       |  강의 출석 마감 시간   |  과목명
+Week  |  title  |  start_date  |  start_time  |  deadline_date  |  deadline_time  |  subject |     pass
+-------------------------------------------------------------------------------------------------------------
+주차	  | 강의 주제   |  수강 시작일	   |  수강 시작 시간    |  강의 출석 마감일       |  강의 출석 마감 시간   |  과목명	 |	   수강여부(boolean)
 
 
 과제 데이터
@@ -159,8 +159,10 @@ public class SeleniumTest {
     				try {
     					webElement = driver.findElement(By.xpath("//*[@id='listContainer_row:" + num.toString() + "']/td[1]/span[2]"));
     					String lessonWeek = webElement.getText();
-    					webElement = driver.findElement(By.xpath("//*[@id='listContainer_row:" + num.toString() + "']/td[2]/span[2]"));
-    					lessonList.add(new LessonDataSet(webElement.getText(), courseList.get(i).course_name, lessonWeek));
+    					webElement = driver.findElement(By.xpath("//*[@id='listContainer_row:" + num.toString() + "']/td[7]/span[2]"));
+    					String passData = webElement.getText();
+    					webElement = driver.findElement(By.xpath("//*[@id='listContainer_row:" + num.toString() + "']/td[2]/span[2]"));					
+    					lessonList.add(new LessonDataSet(webElement.getText(), courseList.get(i).course_name, lessonWeek, passData));
     					num++;
         			} catch(Exception e) {
         				break;
@@ -278,7 +280,8 @@ public class SeleniumTest {
     	private String deadline_date;
     	private String deadline_time;
     	private String subject;
-    	LessonDataSet(String s, String sub, String wk) throws ParseException{
+    	private boolean pass;
+    	LessonDataSet(String s, String sub, String wk, String ps) throws ParseException{
     		this.Week = wk;
     		this.title = null;
     		this.start_date = null;
@@ -286,6 +289,12 @@ public class SeleniumTest {
     		this.deadline_date = null;
     		this.deadline_time = null;
     		this.subject = sub;
+    		if(ps.equals("P")) {
+    			this.pass = true;
+    		}
+    		else {
+    			this.pass = false;
+    		}
     		saveData(s);
     		if(start_date == null) {
     			Calendar start = Calendar.getInstance();
@@ -337,7 +346,7 @@ public class SeleniumTest {
     	}
     	@Override
     	public void printData() {
-    		System.out.println(this.subject + " | " + this.Week + " | " + this.title + " | " + this.start_date + " | " + this.start_time + " | " + this.deadline_date + " | " + this.deadline_time );
+    		System.out.println(this.subject + " | " + this.Week + " | " + this.title + " | " + this.start_date + " | " + this.start_time + " | " + this.deadline_date + " | " + this.deadline_time + " | " + this.pass );
     	}
     	public String getWeek() {
     		return this.Week;
@@ -359,6 +368,9 @@ public class SeleniumTest {
     	}
     	public String getSubject() {
     		return this.subject;
+    	}
+    	public boolean getPass() {
+    		return this.pass;
     	}
     }
 //과제 데이터
