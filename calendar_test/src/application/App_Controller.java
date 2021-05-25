@@ -41,7 +41,7 @@ public class App_Controller {
         	alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
     	}
 
-    	//alert.getDialogPane().setExpandableContent(new ScrollPane(new TextArea(sw.toString())));
+    	
     	
     	Optional<ButtonType> result = alert.showAndWait();
     	if (result.isPresent() && result.get() == ButtonType.YES) {
@@ -82,9 +82,6 @@ public class App_Controller {
     	}
     }
     
-    public void test() {
-    	System.out.println("테스트입니다 컨트롤러 접근 성공");
-    }
     
     //시스템 연동 스레드
     public class crawlThread extends Thread {

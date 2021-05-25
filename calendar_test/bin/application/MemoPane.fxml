@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="1000.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MemoPaneController">
+   <children>
+      <Label prefHeight="50.0" prefWidth="350.0" text="Daily Memo" />
+      <TextArea fx:id="DailyTextArea" prefHeight="450.0" prefWidth="200.0" promptText="일간메모를 작성해주세요" />
+      <Label prefHeight="50.0" prefWidth="350.0" text="Monthly Memo" />
+      <TextArea fx:id="MonthlyTextArea" prefHeight="450.0" prefWidth="200.0"  promptText="월간메모를 작성해주세요" />
+   </children>
+</VBox>

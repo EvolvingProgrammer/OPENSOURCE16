@@ -21,6 +21,7 @@ public class Event_handle {
 	LinkedList<Entry<String>> University_Schedule_list;
 	LinkedList<Entry<String>> BlackBord_Schedule_list;
 	LinkedList<Entry<String>> BlackBord_Movie_Schedule_list;
+	LinkedList<Entry<String>> BlackBord_Movie_Finished_list;
 	
 	
 	
@@ -40,23 +41,28 @@ public class Event_handle {
     
     		 switch(e.getCalendar().getName()) {
              case "개인일정" :
-            	 M.Private_Schedule.addEntry(temp);
+            //	 M.Private_Schedule.addEntry(temp);
                  Private_Schedule_list.add(temp);
                  
                  break;
              case "학사일정" :
-            	 M.University_Schedule.addEntry(temp);
+        //    	 M.University_Schedule.addEntry(temp);
                  University_Schedule_list.add(temp);
                  break;
              case "블랙보드 과제" :
-            	 M.BlackBord_Schedule.addEntry(temp);
+        //    	 M.BlackBord_Schedule.addEntry(temp);
                  BlackBord_Schedule_list.add(temp);
                  break;
              case "이러닝 일정" :
             	// db.add_entry(M.BlackBord_Movie_Schedule,temp, "BlackBord_Movie_Schedule");
-            	 M.BlackBord_Movie_Schedule.addEntry(temp);
+          //  	 M.BlackBord_Movie_Schedule.addEntry(temp);
             	 BlackBord_Movie_Schedule_list.add(temp);
                  break;
+                 
+             case "이러닝 완료" :
+            	 BlackBord_Movie_Finished_list.add(temp);
+            	 break;
+             		
                  
                  
              default :
@@ -96,6 +102,10 @@ public class Event_handle {
 	            	 db.delete_entry(BlackBord_Movie_Schedule_list,temp.getId());
 	                 break;
 	                 
+	             case "이러닝 완료" :
+	            	 db.delete_entry(BlackBord_Movie_Finished_list,temp.getId());
+	            	 break;
+	                 
 	                 
 	             default :
 	                 System.out.println("str 은 아무것도 아닙니다.");
@@ -127,6 +137,10 @@ public class Event_handle {
             case "이러닝 일정" :
            	 t_link = BlackBord_Movie_Schedule_list;
                 break;
+                
+            case "이러닝 완료" :
+            	t_link = BlackBord_Movie_Finished_list;
+            	break;
                 
                 
             default :
@@ -165,6 +179,10 @@ public class Event_handle {
             case "이러닝 일정" :
            	 t_link = BlackBord_Movie_Schedule_list;
                 break;
+                
+            case "이러닝 완료" :
+            	t_link = BlackBord_Movie_Finished_list;
+            	break;
                 
                 
             default :
@@ -212,6 +230,11 @@ public class Event_handle {
                 	be  = M.BlackBord_Movie_Schedule;
                     break;
                     
+                case "이러닝 완료" :
+                	before = BlackBord_Movie_Finished_list;
+                	be  = M.BlackBord_Movie_Finished;
+                	break;
+                    
                    
                     
                 default :
@@ -239,6 +262,10 @@ public class Event_handle {
                 case "이러닝 일정" :
                 	after = M.BlackBord_Movie_Schedule;
                 	aft = BlackBord_Movie_Schedule_list;
+                    break;
+                case "이러닝 완료" :
+                	after = M.BlackBord_Movie_Finished;
+                	aft = BlackBord_Movie_Finished_list;
                     break;
                     
                     
@@ -280,6 +307,9 @@ public class Event_handle {
             case "이러닝 일정" :
            	 t_link = BlackBord_Movie_Schedule_list;
                 break;
+            case "이러닝 완료" :
+              	 t_link = BlackBord_Movie_Finished_list;
+                   break;
                 
                 
             default :
@@ -320,7 +350,7 @@ public class Event_handle {
     		
     		if(before.get(i).getId() == temp.getId())
     		{
-    			//before.get(i).setCalendar(after);
+    			
     			aft.add(temp);
     			before.remove(i);
     			

@@ -44,6 +44,8 @@ public class Main extends Application {
     Calendar University_Schedule;
     Calendar BlackBord_Schedule ;
     Calendar BlackBord_Movie_Schedule;
+    Calendar BlackBord_Movie_Finished;
+    
     Data_base db;
 
     @Override
@@ -59,10 +61,23 @@ public class Main extends Application {
         University_Schedule = new Calendar("학사일정");
         BlackBord_Schedule = new Calendar("블랙보드 과제");
         BlackBord_Movie_Schedule = new Calendar("이러닝 일정");
-       // Calendar armin = new Calendar("Armin");
-       // Calendar birthdays = new Calendar("Birthdays");
-      //  Calendar holidays = new Calendar("Holidays");
+        BlackBord_Movie_Finished = new Calendar("이러닝 완료");
+        Private_Schedule.setShortName("개");
+        University_Schedule.setShortName("학");
+        BlackBord_Schedule.setShortName("블");
+        BlackBord_Movie_Schedule.setShortName("이");
+        BlackBord_Movie_Finished.setShortName("이");
+   
+       
+        Private_Schedule.setStyle(Style.STYLE1);
+        University_Schedule.setStyle(Style.STYLE2);
+        BlackBord_Schedule.setStyle(Style.STYLE3);
+        BlackBord_Movie_Schedule.setStyle(Style.STYLE4);
+        BlackBord_Movie_Finished.setStyle(Style.STYLE6);
         
+        
+        // 핸들러 db실행구간
+     
         Event_handle handle = new Event_handle();
         
     
@@ -73,9 +88,8 @@ public class Main extends Application {
         University_Schedule.addEventHandler(l);
         BlackBord_Schedule.addEventHandler(l);
         BlackBord_Movie_Schedule.addEventHandler(l);
-        
-        
-        // db와 핸들러 연결 메인 서로 연결
+        BlackBord_Movie_Finished.addEventHandler(l);
+      
         db = new Data_base();
         db.M = this;
     
@@ -83,65 +97,20 @@ public class Main extends Application {
         handle.University_Schedule_list = db.University_Schedule_list;
         handle.BlackBord_Schedule_list = db.BlackBord_Schedule_list ;
         handle.BlackBord_Movie_Schedule_list = db.BlackBord_Movie_Schedule_list;
+        handle.BlackBord_Movie_Finished_list = db.BlackBord_Movie_Finished_list;
         handle.db = db;
         handle.M = this;
         
-        
-      
-        
-        // 메인 연결후 데이터베이스 리로드 시작
         db.reload_schedule(Private_Schedule,"Private_Schedule");
         db.reload_schedule(University_Schedule,"University_Schedule");
         db.reload_schedule(BlackBord_Schedule,"BlackBord_Schedule");
         db.reload_schedule(BlackBord_Movie_Schedule,"BlackBord_Movie_Schedule");
+        db.reload_schedule(BlackBord_Movie_Finished,"BlackBord_Finished_Schedule" );
         
-        
-        ///
-        
-       
-        
-     //   philip.addEventHandler(l);
-     //   jule.addEventHandler(l);
-      //  armin.addEventHandler(l);
-        
-        ////
-
-        
-      /*
-        Entry<String> entry = new Entry<>("Hello");
-        //entry.setInterval(LocalDate.now());
-        entry.changeStartDate(LocalDate.now());
-        entry.changeEndDate(LocalDate.now());
-        entry.changeStartTime(LocalTime.of(12,30));
-        entry.changeEndTime(LocalTime.of(13,30));
-       
-        University_Schedule.addEntry(entry);
-        
-        */
-    
-       
-     
-        
-       
-        Private_Schedule.setShortName("개");
-        University_Schedule.setShortName("학");
-        BlackBord_Schedule.setShortName("블");
-        BlackBord_Movie_Schedule.setShortName("이");
-      //  armin.setShortName("A");
-     //   birthdays.setShortName("B");
-      //  holidays.setShortName("H");
-       
-        Private_Schedule.setStyle(Style.STYLE1);
-        University_Schedule.setStyle(Style.STYLE2);
-        BlackBord_Schedule.setStyle(Style.STYLE3);
-        BlackBord_Movie_Schedule.setStyle(Style.STYLE4);
-     //   armin.setStyle(Style.STYLE5);
-    //    birthdays.setStyle(Style.STYLE6);
-    //    holidays.setStyle(Style.STYLE7);
-
-        
+  
+      
         CalendarSource familyCalendarSource = new CalendarSource("Dynamic Scheduler");
-        familyCalendarSource.getCalendars().addAll(Private_Schedule, University_Schedule, BlackBord_Schedule, BlackBord_Movie_Schedule);
+        familyCalendarSource.getCalendars().addAll(Private_Schedule, University_Schedule, BlackBord_Schedule, BlackBord_Movie_Schedule, BlackBord_Movie_Finished);
 
         calendarView.getCalendarSources().setAll(familyCalendarSource);
         calendarView.setRequestedTime(LocalTime.now());
@@ -157,7 +126,7 @@ public class Main extends Application {
     		FXMLLoader loader = new FXMLLoader(getClass().getResource("Selenium_Ui.fxml"));
     		Parent root2 = loader.load();
     		App_Controller dac = (App_Controller) loader.getController();
-    		dac.test();
+    		
     		dac.db = this.db;
     		dac.M = this;
     	

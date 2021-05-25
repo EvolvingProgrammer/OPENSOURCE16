@@ -26,6 +26,7 @@ public class Data_base {
 	LinkedList<Entry<String>> University_Schedule_list = new LinkedList<Entry<String>>();
 	LinkedList<Entry<String>> BlackBord_Schedule_list = new LinkedList<Entry<String>>();
 	LinkedList<Entry<String>> BlackBord_Movie_Schedule_list = new LinkedList<Entry<String>>();
+	LinkedList<Entry<String>> BlackBord_Movie_Finished_list = new LinkedList<Entry<String>>();
 	Statement stat;
 	SeleniumTest seltest;
 	
@@ -56,16 +57,7 @@ public class Data_base {
 	
 	public void reload_schedule(Calendar cal, String query_string)
 	{
-		
-	/*
-		try {
-			Class.forName("org.sqlite.JDBC");
-			String dbFile = "lib\\db\\test_db.db"; 
-			try {
-				con = DriverManager.getConnection("jdbc:sqlite:" + dbFile);
-				
-				Statement stat = con.createStatement();
-	*/
+	
 				try {
 					rs = stat.executeQuery("SELECT * from "+query_string );
 				
@@ -102,7 +94,7 @@ public class Data_base {
 			        entry.changeStartTime(LocalTime.parse(StartTime, DateTimeFormatter.ISO_TIME));
 			        entry.changeEndTime(LocalTime.parse(EndTime, DateTimeFormatter.ISO_TIME));
 			        cal.addEntry(entry);
-			        //
+			     
 					
 				
 				}
@@ -116,19 +108,7 @@ public class Data_base {
 
 				
 				
-		/*		
-				
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-*/
+	
 		
 
 		
@@ -163,11 +143,13 @@ public class Data_base {
 			stat.executeUpdate("DELETE FROM University_Schedule;");
 			stat.executeUpdate("DELETE FROM BlackBord_Schedule;");
 			stat.executeUpdate("DELETE FROM BlackBord_Movie_Schedule;");
+			stat.executeUpdate("DELETE FROM BlackBord_Finished_Schedule;");
 			
 			save_calendar_method(Private_Schedule_list, "Private_Schedule");
 			save_calendar_method(University_Schedule_list, "University_Schedule");
 			save_calendar_method(BlackBord_Schedule_list, "BlackBord_Schedule");
 			save_calendar_method(BlackBord_Movie_Schedule_list, "BlackBord_Movie_Schedule");
+			save_calendar_method(BlackBord_Movie_Finished_list, "BlackBord_Finished_Schedule");
 		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -188,28 +170,6 @@ public class Data_base {
 					
 					for(int i=0; i<my_entry_list.size(); i++)
 					{
-						/*
-							 switch(.get(i).getCalendar().getName()) {
-				             case "개인일정" :
-				            	 type = "Private_Schedule";
-				                 break;
-				             case "학사일정" :
-				            	 type = "University_Schedule";
-				                 break;
-				             case "블랙보드 과제" :
-				            	 type = "BlackBord_Schedule";
-				                 break;
-				             case "이러닝 일정" :
-				            	 type = "BlackBord_Movie_Schedule";
-				                 break;
-				                 
-				                 
-				             default :
-				                 System.out.println("str 은 아무것도 아닙니다.");
-				                 break;
-							 }
-							
-							*/
 							
 							
 							
@@ -220,7 +180,7 @@ public class Data_base {
 								String s2 =  type + "(Title,Fullday,StartDate,EndDate,StartTime,EndTime) VALUES";
 								String s3 = "("+ "\"" + my_entry_list.get(i).getTitle()+ "\"" +"," +"1"+","+ "\""+ my_entry_list.get(i).getStartDate() + "\""+ "," + "\""+ my_entry_list.get(i).getEndDate() + "\"" + "," 
 								+  "\""+ my_entry_list.get(i).getStartTime()+ "\""+","+ "\""+ my_entry_list.get(i).getEndTime()+ "\"" +");";
-							//  System.out.println(s1+s2+s3);
+							
 								stat.executeUpdate(s1+s2+s3);
 							}
 							else
@@ -230,7 +190,7 @@ public class Data_base {
 								String s3 = "("+ "\"" + my_entry_list.get(i).getTitle()+ "\"" +"," +"0"+","+ "\""+ my_entry_list.get(i).getStartDate() + "\""+ "," + "\""+ my_entry_list.get(i).getEndDate() + "\"" + "," 
 								+  "\""+ my_entry_list.get(i).getStartTime()+ "\""+","+ "\""+ my_entry_list.get(i).getEndTime()+ "\"" +");";
 								
-							//	System.out.println(s1+s2+s3);
+							
 								stat.executeUpdate(s1+s2+s3);
 								
 								
@@ -244,7 +204,7 @@ public class Data_base {
 					}
 					
 					
-			//	rs = stat.executeQuery("SELECT * from Private_Schedule" );
+			
 				
 	
 	
@@ -279,8 +239,17 @@ public class Data_base {
 	        entry.changeStartTime( LocalTime.parse(seltest.lessonList.get(i).getStartTime(), DateTimeFormatter.ISO_TIME));
 	        entry.changeEndTime( LocalTime.parse(seltest.lessonList.get(i).getDeadlineTime(), DateTimeFormatter.ISO_TIME));
 	        entry.setFullDay(true);
-	        M.BlackBord_Movie_Schedule.addEntry(entry);
-	        //
+	        
+	        if( seltest.lessonList.get(i).getPass() == true)
+	        {
+	        	M.BlackBord_Movie_Finished.addEntry(entry);
+	        }
+	        else
+	        {
+	        	M.BlackBord_Movie_Schedule.addEntry(entry);
+	        }
+	        
+	      
 			
 		}
 		
@@ -295,15 +264,10 @@ public class Data_base {
 	        		seltest.assignmentList.get(i).getSubject() +" " +
 	    	        seltest.assignmentList.get(i).getName()     
 			);
-	        
-	      
-	      
-	       // entry.setInterval(LocalDate.now());
+	 
 	        entry.changeStartDate(LocalDate.now());
 	        entry.changeStartTime( LocalTime.now());
-	        
-	        
-	        
+	     
 	        String enddate = seltest.assignmentList.get(i).getDate(); 
 	        enddate = enddate.replace('년', '-');
 	        enddate = enddate.replace('월', '-');
@@ -314,7 +278,7 @@ public class Data_base {
 	        entry.changeEndTime( LocalTime.parse(seltest.assignmentList.get(i).getTime(), DateTimeFormatter.ISO_TIME));
 	        entry.setFullDay(true);
 	        M.BlackBord_Schedule.addEntry(entry);
-	        //
+	       
 			
 		}
 		
@@ -342,14 +306,12 @@ public class Data_base {
 		    String []str3 = end_date.split("-");
 		    LocalDate enddat = LocalDate.of(Integer.parseInt(str3[0]),Integer.parseInt(str3[1]), Integer.parseInt(str3[2]));
 	      
-	       // entry.setInterval(LocalDate.now());
 	        entry.setFullDay(true);
 	        entry.changeStartDate(startdat);
 	        entry.changeEndDate(enddat);
-	      //  entry.changeStartTime( LocalTime.parse(seltest.academicList.get(i).get , null));
-	      //  entry.changeEndTime( LocalTime.parse(seltest.assignmentList.get(i).getTime(), DateTimeFormatter.ISO_TIME));
+	      
 	        M.University_Schedule.addEntry(entry);
-	        //
+	       
 			
 		}
 		
@@ -361,14 +323,17 @@ public class Data_base {
 			stat.executeUpdate("DELETE FROM University_Schedule;");
 			stat.executeUpdate("DELETE FROM BlackBord_Schedule;");
 			stat.executeUpdate("DELETE FROM BlackBord_Movie_Schedule;");
+			stat.executeUpdate("DELETE FROM BlackBord_Finished_Schedule;");
 			
 			M.BlackBord_Movie_Schedule.clear();
 			M.BlackBord_Schedule.clear();
 			M.University_Schedule.clear();
+			M.BlackBord_Movie_Finished.clear();
 			
 			University_Schedule_list.clear();
 			BlackBord_Schedule_list.clear();
 			BlackBord_Movie_Schedule_list.clear();
+			BlackBord_Movie_Finished_list.clear();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
