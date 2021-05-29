@@ -19,7 +19,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 /*
-2021-05-16 수정본
+2021-05-29 수정본
 
 각 리스트에 저장되는 데이터들은 각각 아래와 같은 변수로 읽어올 수 있음.
 
@@ -50,7 +50,7 @@ interface DataSet {
 	void printData();
 };
 
-public class SeleniumTest {
+public class SeleniumCrawl {
 	
 	
 	
@@ -78,7 +78,7 @@ public class SeleniumTest {
 	private String blackboard_url;
 	private String academic_url;
 
-	public SeleniumTest() {
+	public SeleniumCrawl() {
 		super();
 		//System Property SetUp
 		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);

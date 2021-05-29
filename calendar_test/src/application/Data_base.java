@@ -28,11 +28,11 @@ public class Data_base {
 	LinkedList<Entry<String>> BlackBord_Movie_Schedule_list = new LinkedList<Entry<String>>();
 	LinkedList<Entry<String>> BlackBord_Movie_Finished_list = new LinkedList<Entry<String>>();
 	Statement stat;
-	SeleniumTest seltest;
+	SeleniumCrawl selCrawl;
 	
 	public Data_base() {
 		
-		seltest = new SeleniumTest();
+		selCrawl = new SeleniumCrawl();
 		
 		// TODO Auto-generated constructor stub
 		try {
@@ -218,29 +218,29 @@ public class Data_base {
 	
 	public void sync_selenium()
 	{
-		seltest.crawl();
+		selCrawl.crawl();
 		
 		
-		for(int i=0; i<seltest.lessonList.size(); i++)
+		for(int i=0; i<selCrawl.lessonList.size(); i++)
 		{
 			 
 			
 			 //스케줄 등록 방법, 데이터베이스에서 가져온 스케줄을 등록 할 때(프로그램 실행 시)
 	        Entry<String> entry = new Entry<>(
-	        		seltest.lessonList.get(i).getSubject() +" " +
-	        		seltest.lessonList.get(i).getWeek() + " " +
-	        		seltest.lessonList.get(i).getTitle()
+	        		selCrawl.lessonList.get(i).getSubject() +" " +
+	        		selCrawl.lessonList.get(i).getWeek() + " " +
+	        		selCrawl.lessonList.get(i).getTitle()
 			);
 	        
 	      
 	       // entry.setInterval(LocalDate.now());
-	        entry.changeStartDate(LocalDate.parse(seltest.lessonList.get(i).getStartDate(), DateTimeFormatter.ISO_DATE));
-	        entry.changeEndDate(LocalDate.parse(seltest.lessonList.get(i).getDeadlineDate(), DateTimeFormatter.ISO_DATE));
-	        entry.changeStartTime( LocalTime.parse(seltest.lessonList.get(i).getStartTime(), DateTimeFormatter.ISO_TIME));
-	        entry.changeEndTime( LocalTime.parse(seltest.lessonList.get(i).getDeadlineTime(), DateTimeFormatter.ISO_TIME));
+	        entry.changeStartDate(LocalDate.parse(selCrawl.lessonList.get(i).getStartDate(), DateTimeFormatter.ISO_DATE));
+	        entry.changeEndDate(LocalDate.parse(selCrawl.lessonList.get(i).getDeadlineDate(), DateTimeFormatter.ISO_DATE));
+	        entry.changeStartTime( LocalTime.parse(selCrawl.lessonList.get(i).getStartTime(), DateTimeFormatter.ISO_TIME));
+	        entry.changeEndTime( LocalTime.parse(selCrawl.lessonList.get(i).getDeadlineTime(), DateTimeFormatter.ISO_TIME));
 	        entry.setFullDay(true);
 	        
-	        if( seltest.lessonList.get(i).getPass() == true)
+	        if( selCrawl.lessonList.get(i).getPass() == true)
 	        {
 	        	M.BlackBord_Movie_Finished.addEntry(entry);
 	        }
@@ -255,27 +255,27 @@ public class Data_base {
 		
 		
 		
-		for(int i=0; i<seltest.assignmentList.size(); i++)
+		for(int i=0; i<selCrawl.assignmentList.size(); i++)
 		{
 			 
 			
 			 //스케줄 등록 방법, 데이터베이스에서 가져온 스케줄을 등록 할 때(프로그램 실행 시)
 	        Entry<String> entry = new Entry<>(
-	        		seltest.assignmentList.get(i).getSubject() +" " +
-	    	        seltest.assignmentList.get(i).getName()     
+	        		selCrawl.assignmentList.get(i).getSubject() +" " +
+	    	        selCrawl.assignmentList.get(i).getName()     
 			);
 	 
 	        entry.changeStartDate(LocalDate.now());
 	        entry.changeStartTime( LocalTime.now());
 	     
-	        String enddate = seltest.assignmentList.get(i).getDate(); 
+	        String enddate = selCrawl.assignmentList.get(i).getDate(); 
 	        enddate = enddate.replace('년', '-');
 	        enddate = enddate.replace('월', '-');
 	        enddate = enddate.replace("일", "");
 		    String []str2 = enddate.split("-");
 		    LocalDate ld = LocalDate.of(Integer.parseInt(str2[0]),Integer.parseInt(str2[1]), Integer.parseInt(str2[2]));
 	        entry.changeEndDate(ld);
-	        entry.changeEndTime( LocalTime.parse(seltest.assignmentList.get(i).getTime(), DateTimeFormatter.ISO_TIME));
+	        entry.changeEndTime( LocalTime.parse(selCrawl.assignmentList.get(i).getTime(), DateTimeFormatter.ISO_TIME));
 	        entry.setFullDay(true);
 	        M.BlackBord_Schedule.addEntry(entry);
 	       
@@ -283,22 +283,22 @@ public class Data_base {
 		}
 		
 		
-		for(int i=0; i<seltest.academicList.size(); i++)
+		for(int i=0; i<selCrawl.academicList.size(); i++)
 		{
 			 
 			
 			 
 	        Entry<String> entry = new Entry<>(
-	        		seltest.academicList.get(i).getEvent()  
+	        		selCrawl.academicList.get(i).getEvent()  
 			);
 	        
-	        String start_date = seltest.academicList.get(i).getStartYear() +"-" + 
-	        				   seltest.academicList.get(i).getStartMonth() +"-" + 
-	        				   seltest.academicList.get(i).getStartDay();
+	        String start_date = selCrawl.academicList.get(i).getStartYear() +"-" + 
+	        				   selCrawl.academicList.get(i).getStartMonth() +"-" + 
+	        				   selCrawl.academicList.get(i).getStartDay();
 	        
-	        String end_date =   seltest.academicList.get(i).getEndYear() +"-" + 
- 				   			   seltest.academicList.get(i).getEndMonth() +"-" + 
- 				   			   seltest.academicList.get(i).getEndDay(); 
+	        String end_date =   selCrawl.academicList.get(i).getEndYear() +"-" + 
+ 				   			   selCrawl.academicList.get(i).getEndMonth() +"-" + 
+ 				   			   selCrawl.academicList.get(i).getEndDay(); 
 	       
 	        String []str2 = start_date.split("-");
 		    LocalDate startdat = LocalDate.of(Integer.parseInt(str2[0]),Integer.parseInt(str2[1]), Integer.parseInt(str2[2]));
